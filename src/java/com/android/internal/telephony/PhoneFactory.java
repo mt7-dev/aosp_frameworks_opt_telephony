@@ -141,8 +141,14 @@ public class PhoneFactory {
                     networkModes[i] = RILConstants.PREFERRED_NETWORK_MODE;
 
                     Rlog.i(LOG_TAG, "Network Mode set to " + Integer.toString(networkModes[i]));
-                    sCommandsInterfaces[i] = new RIL(context, networkModes[i],
+                    
+                    /* START - Adaptations for Huawei RIL -- gabry3795 | 2016/07/31 */
+                    /* We need to instatiate huawei ril class to handle special messages sent
+                     * by the rild
+                     * */
+                    sCommandsInterfaces[i] = new HuaweiRIL(context, networkModes[i],
                             cdmaSubscription, i);
+                    /* END - Adaptations for Huawei RIL -- gabry3795 | 2016/07/31 */
                 }
                 Rlog.i(LOG_TAG, "Creating SubscriptionController");
                 SubscriptionController.init(context, sCommandsInterfaces);
