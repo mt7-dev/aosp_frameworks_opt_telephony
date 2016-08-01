@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.android.internal.telephony.dataconnection;
-
 import android.telephony.ServiceState;
 import android.text.TextUtils;
-
 import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.telephony.RILConstants;
 import com.android.internal.telephony.uicc.IccRecords;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 /**
  * This class represents a apn setting for create PDP link
  */
 public class ApnSetting {
-
     static final String V2_FORMAT_REGEX = "^\\[ApnSettingV2\\]\\s*";
     static final String V3_FORMAT_REGEX = "^\\[ApnSettingV3\\]\\s*";
-
     public final String carrier;
     public final String apn;
     public final String proxy;
@@ -51,7 +44,6 @@ public class ApnSetting {
     public final String protocol;
     public final String roamingProtocol;
     public final int mtu;
-
     /**
       * Current status of APN
       * true : enabled APN, false : disabled APN.
@@ -72,14 +64,12 @@ public class ApnSetting {
       * but currently only used for LTE(14) and EHRPD(13).
       */
     public final int bearerBitmask;
-
     /* ID of the profile in the modem */
     public final int profileId;
     public final boolean modemCognitive;
     public final int maxConns;
     public final int waitTime;
     public final int maxConnsTime;
-
     /**
       * MVNO match type. Possible values:
       *   "spn": Service provider name.
@@ -94,7 +84,6 @@ public class ApnSetting {
       *   "gid": 4E, 33
       */
     public final String mvnoMatchData;
-
     public ApnSetting(int id, String numeric, String carrier, String apn,
             String proxy, String port,
             String mmsc, String mmsProxy, String mmsPort,
@@ -131,9 +120,7 @@ public class ApnSetting {
         this.mtu = mtu;
         this.mvnoType = mvnoType;
         this.mvnoMatchData = mvnoMatchData;
-
     }
-
     /**
      * Creates an ApnSetting object from a string.
      *
@@ -164,7 +151,6 @@ public class ApnSetting {
      */
     public static ApnSetting fromString(String data) {
         if (data == null) return null;
-
         int version;
         // matches() operates on the whole string, so append .* to the regex.
         if (data.matches(V3_FORMAT_REGEX + ".*")) {
@@ -176,19 +162,16 @@ public class ApnSetting {
         } else {
             version = 1;
         }
-
         String[] a = data.split("\\s*,\\s*");
         if (a.length < 14) {
             return null;
         }
-
         int authType;
         try {
             authType = Integer.parseInt(a[12]);
         } catch (NumberFormatException e) {
             authType = 0;
         }
-
         String[] typeArray;
         String protocol, roamingProtocol;
         boolean carrierEnabled;
@@ -215,9 +198,7 @@ public class ApnSetting {
             protocol = a[14];
             roamingProtocol = a[15];
             carrierEnabled = Boolean.parseBoolean(a[16]);
-
             bearerBitmask = ServiceState.getBitmaskFromString(a[17]);
-
             if (a.length > 22) {
                 modemCognitive = Boolean.parseBoolean(a[19]);
                 try {
@@ -239,13 +220,11 @@ public class ApnSetting {
                 mvnoMatchData = a[25];
             }
         }
-
         return new ApnSetting(-1,a[10]+a[11],a[0],a[1],a[2],a[3],a[7],a[8],
                 a[9],a[4],a[5],authType,typeArray,protocol,roamingProtocol,carrierEnabled,0,
                 bearerBitmask, profileId, modemCognitive, maxConns, waitTime, maxConnsTime, mtu,
                 mvnoType, mvnoMatchData);
     }
-
     /**
      * Creates an array of ApnSetting objects from a string.
      *
@@ -268,7 +247,6 @@ public class ApnSetting {
         }
         return retVal;
     }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -304,14 +282,12 @@ public class ApnSetting {
         sb.append(", ").append(mvnoMatchData);
         return sb.toString();
     }
-
     /**
      * Returns true if there are MVNO params specified.
      */
     public boolean hasMvnoParams() {
         return !TextUtils.isEmpty(mvnoType) && !TextUtils.isEmpty(mvnoMatchData);
     }
-
     public boolean canHandleType(String type) {
         if (!carrierEnabled) return false;
         for (String t : types) {
@@ -325,7 +301,6 @@ public class ApnSetting {
         }
         return false;
     }
-
     private static boolean imsiMatches(String imsiDB, String imsiSIM) {
         // Note: imsiDB value has digit number or 'x' character for seperating USIM information
         // for MVNO operator. And then digit number is matched at same order and 'x' character
@@ -335,10 +310,8 @@ public class ApnSetting {
         //     should be set in USIM for GG Operator.
         int len = imsiDB.length();
         int idxCompare = 0;
-
         if (len <= 0) return false;
         if (len > imsiSIM.length()) return false;
-
         for (int idx=0; idx<len; idx++) {
             char c = imsiDB.charAt(idx);
             if ((c == 'x') || (c == 'X') || (c == imsiSIM.charAt(idx))) {
@@ -349,7 +322,6 @@ public class ApnSetting {
         }
         return true;
     }
-
     public static boolean mvnoMatches(IccRecords r, String mvnoType, String mvnoMatchData) {
         if (mvnoType.equalsIgnoreCase("spn")) {
             if ((r.getServiceProviderName() != null) &&
@@ -371,7 +343,6 @@ public class ApnSetting {
         }
         return false;
     }
-
     // TODO - if we have this function we should also have hashCode.
     // Also should handle changes in type order and perhaps case-insensitivity
     @Override
