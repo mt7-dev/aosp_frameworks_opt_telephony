@@ -1,6 +1,6 @@
 This package contains classes used to manage a DataConnection.
 
-A criticial aspect of this class is that most objects in this
+A critical aspect of this class is that most objects in this
 package run on the same thread except DataConnectionTracker
 This makes processing efficient as it minimizes context
 switching and it eliminates issues with multi-threading.
@@ -11,7 +11,7 @@ DcTesterDeactivateAll takes specific advantage of this
 single threading knowledge by using Dcc#mDcListAll so be
 very careful when making changes that break this assumption.
 
-A related change was in DataConnectionAc I added code that
+A related change was in DataConnectionAc; I added code that
 checks to see if the caller is on a different thread. If
 it is then the AsyncChannel#sendMessageSynchronously is
 used. If the caller is on the same thread then a getter
